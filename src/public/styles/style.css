@@ -47,18 +47,18 @@ table, th, td {
     border-collapse: collapse;
     border: 1px solid #ccc;
     line-height: 1.5;
-  }
-  
-  table th {
+}
+
+table th {
     padding: 10px 30px;
     font-weight: bold;
     vertical-align: top;
-  }
-  table td {
+}
+table td {
     padding: 10px 30px;
     vertical-align: top;
-   }
-  
-  tr:nth-child(even) {
+}
+
+tr:nth-child(even) {
     background: #eee;
-   }
+}

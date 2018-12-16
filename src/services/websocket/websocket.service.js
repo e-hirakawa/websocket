@@ -16,8 +16,10 @@ module.exports.init = (server) => {
         // client requests connection 
         .on('request', req => {
             const connection = req.accept(null, req.origin);
+            // メッセージ受信
             connection.on('message', message => {
                 const reqData = getUTF8Data(message);
+                // monitorからのメッセージ受信
                 if (reqData.role === 'monitor') {
                     let agent = monitorAgents.find(req.key);
                     if (!agent) {
@@ -38,6 +40,7 @@ module.exports.init = (server) => {
                         }
                     }
                 }
+                // controllerからのメッセージ受信
                 else if (reqData.role === 'controller') {
                     let agent = controllerAgents.find(req.key);
                     if (!agent) {
@@ -46,9 +49,12 @@ module.exports.init = (server) => {
                     }
                     agent.name = reqData.name;
                     agent.message = reqData.message;
+
+                    // 受信したデータをmonitorへ伝える
                     monitorAgents.broadcast(controllerAgents.toResponse());
                 }
             });
+            // 切断
             connection.on('close', (code, description) => {
                 let agent;
                 if ((agent = monitorAgents.find(req.key)) != null) {
