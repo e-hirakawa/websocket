@@ -30,7 +30,8 @@
     <script>
         const ROLE = 'controller';
         const logger = new Logger(document.getElementById('console'));
-        const socket = new WebSocket(`ws://127.0.0.1:4444/socket/`);
+        const socket = new WebSocket(`ws://${location.host}/socket/`);
+        new WebSocket()
         socket.onopen = () => {
             logger.recieve('socket onopen');
             // establish connection
