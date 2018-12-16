@@ -7,7 +7,7 @@ const websocketService = require('./services/websocket/websocket.service');
 //#endregion
 
 //#region constants
-const PORT_NUMBER = 4444;
+const PORT_NUMBER = 3000;
 //#endregion
 
 //#region app configuration

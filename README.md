@@ -8,6 +8,6 @@ $ cd websocket/src
 $ npm install
 $ node index.js
 ```
-Server running at `http://localhost:4444`
+Server running at `http://localhost:3000`
 
 
