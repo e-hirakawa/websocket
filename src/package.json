@@ -1,0 +1,17 @@
+{
+  "name": "simplify-websocket",
+  "version": "1.0.0",
+  "description": "\"WebSocket with Node.js\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eiji_Hirakawa",
+  "license": "MIT",
+  "dependencies": {
+    "consolidate": "^0.15.1",
+    "express": "^4.16.4",
+    "mustache": "^3.0.1",
+    "websocket": "^1.0.28"
+  }
+}

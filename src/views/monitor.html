@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="styles/bootstrap-reboot.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <title>Monitor - WebSocket Example</title>
+</head>
+
+<body>
+    <h1><a href="/">WebSocket Example</a></h1>
+    <h2>Monitor</h2>
+    <div class="container">
+        <h3>Controllers</h3>
+        <table>
+            <thead>
+                <th>No</th>
+                <th>Name</th>
+                <th>Message</th>
+                <th>Unicast Message to Controlle</th>
+            </thead>
+            <tbody id="controllers"></tbody>
+        </table>
+        <h3>Broadcast Message to Controllers</h3>
+        <input type="text" name="broadcastMessage" id="broadcastMessage">
+        <button onclick="broadcast()">SEND</button>
+        <hr>
+        <div>event console</div>
+        <div id="console"></div>
+    </div>
+
+    <script src="scripts/require.js"></script>
+    <script src="scripts/utility.js"></script>
+    <script>
+        const ROLE = 'monitor';
+        const logger = new Logger(document.getElementById('console'));
+        const table = new MonitorTable(document.getElementById('controllers'));
+        const socket = new WebSocket(`ws://127.0.0.1:4444/socket/`);
+        socket.onopen = () => {
+            logger.recieve('socket onopen');
+            // establish connection
+            const json = JSON.stringify({ role: ROLE });
+            socket.send(json);
+        }
+        socket.onmessage = event => {
+            logger.recieve(`socket onmessage '${event.data}'`);
+            table.create(JSON.parse(event.data), (key, message) => {
+                // send unicast message
+                const json = JSON.stringify({
+                    role: ROLE,
+                    message: message,
+                    destinationKey: key
+                });
+                socket.send(json);
+                logger.send(`json: ${json}`);
+            });
+        }
+        socket.onclose = () => {
+            logger.recieve('socket onclose');
+        }
+        socket.onerror = error => {
+            logger.error(error.message);
+        }
+
+        function broadcast() {
+            const input = document.getElementById('broadcastMessage');
+            // send unicast message
+            const json = JSON.stringify({
+                role: ROLE,
+                message: input.value
+            });
+            input.value = '';
+            socket.send(json);
+            logger.send(`json: ${json}`);
+        }
+    </script>
+</body>
+
+</html>

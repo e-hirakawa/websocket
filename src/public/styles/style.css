@@ -1,0 +1,64 @@
+h1, h2 {
+    margin: 15px;
+}
+.container {
+    margin: 30px auto;
+    width: 90vw;
+}
+nav ul {
+    list-style: none;
+}
+nav li {
+    margin: 8px 0;
+}
+hr {
+    margin: 30px 0;
+}
+#console {
+    border:1px solid #aaa;
+    border-radius: 4px;
+    background: #ddd;
+    margin: 15px 0;
+    padding: 15px;
+}
+.log {
+    margin: 8px 0;
+}
+.log span {
+    margin: 0 4px;
+}
+.log .send::before {
+    content: '[SND]';
+    color: blue;
+}
+.log .recieve::before {
+    content: '[RCV]';
+    color: green;
+}
+.log .error::before {
+    content: '[ERR]';
+    color: red;
+}
+.log .date {
+    color: #666;
+}
+
+table, th, td {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    line-height: 1.5;
+  }
+  
+  table th {
+    padding: 10px 30px;
+    font-weight: bold;
+    vertical-align: top;
+  }
+  table td {
+    padding: 10px 30px;
+    vertical-align: top;
+   }
+  
+  tr:nth-child(even) {
+    background: #eee;
+   }
