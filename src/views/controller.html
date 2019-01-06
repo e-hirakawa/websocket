@@ -53,7 +53,7 @@
         // 受信
         socket.addEventListener(
             WebSocketEventType.RECIEVED,
-            data => logger.recieve(`socket recieved: ${data}`)
+            data => logger.recieve(`socket recieved: ${JSON.stringify(data)}`)
         );
 
         function sendName() {
