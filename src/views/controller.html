@@ -30,7 +30,6 @@
     <script src="scripts/websocket-event-type.js"></script>
     <script src="scripts/websocket-client.js"></script>
     <script>
-        const ROLE = 'controller';
         const logger = new Logger(document.getElementById('console'));
         const socket = new WebSocketClient('controller');
         // 接続
@@ -38,7 +37,7 @@
             WebSocketEventType.OPENED,
             () => {
                 logger.recieve('socket opened');
-                socket.send({ role: ROLE });
+                socket.send({});
             }
         );
         // 切斷
@@ -60,7 +59,6 @@
         function sendName() {
             const nameElement = document.getElementById('name');
             const data = {
-                role: ROLE,
                 name: nameElement.value
             };
             socket.send(data);
@@ -70,7 +68,6 @@
             const nameElement = document.getElementById('name');
             const messageElement = document.getElementById('message');
             const data = {
-                role: ROLE,
                 name: nameElement.value,
                 message: messageElement.value
             };

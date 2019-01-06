@@ -36,7 +36,6 @@
     <script src="scripts/websocket-event-type.js"></script>
     <script src="scripts/websocket-client.js"></script>
     <script>
-        const ROLE = 'monitor';
         const logger = new Logger(document.getElementById('console'));
         const table = new MonitorTable(document.getElementById('controllers'));
         const socket = new WebSocketClient('monitor');
@@ -45,7 +44,7 @@
             WebSocketEventType.OPENED,
             () => {
                 logger.recieve('socket opened');
-                socket.send({ role: ROLE });
+                socket.send({});
             }
         );
         // 切斷
@@ -66,7 +65,6 @@
                 table.create(data, (key, message) => {
                     // send unicast message
                     const sendData = {
-                        role: ROLE,
                         message: message,
                         destinationKey: key
                     }
@@ -80,7 +78,6 @@
             const input = document.getElementById('broadcastMessage');
             // send unicast message
             const sendData = {
-                role: ROLE,
                 message: input.value
             }
             input.value = '';
