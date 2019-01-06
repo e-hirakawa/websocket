@@ -22,13 +22,13 @@ class Agents {
     unicast(key, data) {
         const agent = this.find(key);
         if (agent) {
-            agent.connection.sendUTF(JSON.stringify(data));
+            agent.connection.send(JSON.stringify(data));
         }
     }
     broadcast(data) {
         const json = JSON.stringify(data);
         for (const agent of this.agents) {
-            agent.connection.sendUTF(json);
+            agent.connection.send(json);
         }
     }
 }

@@ -1,4 +1,5 @@
-const websocket = require('websocket');
+const url = require('url');
+const WebSocket = require('ws');
 const EventEmmiter = require('events');
 const WebSocketEventType = require('./websocket-event-type');
 
@@ -9,28 +10,31 @@ module.exports = class WebSocketServer {
     constructor(server) {
         this.__events = new EventEmmiter();
 
-        const wss = new websocket.server({
-            httpServer: server,
-            path: '/socket',
-            maxReceivedFrameSize: 0x1000000,
-            autoAcceptConnections: false
-        });
-        wss.on('request', req => {
-            const connection = req.accept(null, req.origin);
-            // メッセージ受信
-            connection.on('message', message => {
-                this.__events.emit(WebSocketEventType.RECIEVED, {
-                    requestKey: req.key,
-                    recieveData: getUTF8Data(message),
-                    connection: connection
+        const wss = new WebSocket.Server({ noServer: true });
+
+        wss.on('connection', (socket, request) => {
+            const requestKey = request.headers['sec-websocket-key'];
+            socket.on('message', data => {
+               this.__events.emit(WebSocketEventType.RECIEVED, {
+                    requestKey: requestKey,
+                    recieveData: JSON.parse(data),
+                    connection: socket
                 });
             });
-            // 切断
-            connection.on('close', (code, description) => {
-                this.__events.emit(WebSocketEventType.CLOSED, req.key);
-            });
+            socket.on('close', () => this.__events.emit(WebSocketEventType.CLOSED, requestKey));
+            socket.on('error', err => this.__events.emit(WebSocketEventType.FAILED, err.message));
         });
-        wss.on('error', error => this.__events.emit(WebSocketEventType.FAILED, error));
+
+        server.on('upgrade', function upgrade(request, socket, head) {
+            const pathname = url.parse(request.url).pathname;
+            if (pathname === '/socket') {
+                wss.handleUpgrade(request, socket, head, ws => {
+                    wss.emit('connection', ws, request);
+                });
+            } else {
+                socket.destroy();
+            }
+        });
     }
 
     /**
@@ -50,15 +54,4 @@ module.exports = class WebSocketServer {
     removeEventListener(webSocketEventType, listener) {
         this.__events.off(webSocketEventType, listener);
     }
-}
-
-function getUTF8Data(message) {
-    var data = null;
-    if (message.type === 'utf8') {
-        const utf8Data = message.utf8Data.trim();
-        if (utf8Data !== '') {
-            data = JSON.parse(utf8Data);
-        }
-    }
-    return data;
 }
