@@ -33,48 +33,58 @@
     </div>
 
     <script src="scripts/utility.js"></script>
+    <script src="scripts/websocket-client.js"></script>
     <script>
-        console.log(location, location.hostname);
         const ROLE = 'monitor';
         const logger = new Logger(document.getElementById('console'));
         const table = new MonitorTable(document.getElementById('controllers'));
-        const socket = new WebSocket(`ws://${location.host}/socket/`);
-        socket.onopen = () => {
-            logger.recieve('socket onopen');
-            // establish connection
-            const json = JSON.stringify({ role: ROLE });
-            socket.send(json);
-        }
-        socket.onmessage = event => {
-            logger.recieve(`socket onmessage '${event.data}'`);
-            table.create(JSON.parse(event.data), (key, message) => {
-                // send unicast message
-                const json = JSON.stringify({
-                    role: ROLE,
-                    message: message,
-                    destinationKey: key
+        const socket = new WebSocketClient('socket');
+        // 接続
+        socket.addEventListener(
+            WebSocketEventType.OPENED,
+            () => {
+                logger.recieve('socket opened');
+                socket.send({ role: ROLE });
+            }
+        );
+        // 切斷
+        socket.addEventListener(
+            WebSocketEventType.CLOSED,
+            () => logger.recieve('socket closed')
+        );
+        // 障害
+        socket.addEventListener(
+            WebSocketEventType.FAILED,
+            error => logger.recieve(`socket failed: ${error.data}`)
+        );
+        // 受信
+        socket.addEventListener(
+            WebSocketEventType.RECIEVED,
+            data => {
+                logger.recieve(`socket recieved: '${JSON.stringify(data)}'`);
+                table.create(data, (key, message) => {
+                    // send unicast message
+                    const sendData = {
+                        role: ROLE,
+                        message: message,
+                        destinationKey: key
+                    }
+                    socket.send(sendData);
+                    logger.send(`sendData: ${JSON.stringify(sendData)}`);
                 });
-                socket.send(json);
-                logger.send(`json: ${json}`);
-            });
-        }
-        socket.onclose = () => {
-            logger.recieve('socket onclose');
-        }
-        socket.onerror = error => {
-            logger.error(error.message);
-        }
+            }
+        );
 
         function broadcast() {
             const input = document.getElementById('broadcastMessage');
             // send unicast message
-            const json = JSON.stringify({
+            const sendData = {
                 role: ROLE,
                 message: input.value
-            });
+            }
             input.value = '';
-            socket.send(json);
-            logger.send(`json: ${json}`);
+            socket.send(sendData);
+            logger.send(`sendData: ${JSON.stringify(sendData)}`);
         }
     </script>
 </body>
