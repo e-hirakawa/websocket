@@ -27,45 +27,54 @@
     </div>
 
     <script src="scripts/utility.js"></script>
+    <script src="scripts/websocket-client.js"></script>
     <script>
         const ROLE = 'controller';
         const logger = new Logger(document.getElementById('console'));
-        const socket = new WebSocket(`ws://${location.host}/socket/`);
-        socket.onopen = () => {
-            logger.recieve('socket onopen');
-            // establish connection
-            const json = JSON.stringify({ role: ROLE });
-            socket.send(json);
-        }
-        socket.onmessage = event => {
-            logger.recieve(`socket onmessage '${event.data}'`);
-        }
-        socket.onclose = () => {
-            logger.recieve('socket onclose');
-        }
-        socket.onerror = error => {
-            logger.error(error.message);
-        }
+        const socket = new WebSocketClient('socket');
+        // 接続
+        socket.addEventListener(
+            WebSocketEventType.OPENED,
+            () => {
+                logger.recieve('socket opened');
+                socket.send({ role: ROLE });
+            }
+        );
+        // 切斷
+        socket.addEventListener(
+            WebSocketEventType.CLOSED,
+            () => logger.recieve('socket closed')
+        );
+        // 障害
+        socket.addEventListener(
+            WebSocketEventType.FAILED,
+            error => logger.recieve(`socket failed: ${error.data}`)
+        );
+        // 受信
+        socket.addEventListener(
+            WebSocketEventType.RECIEVED,
+            data => logger.recieve(`socket recieved: ${data}`)
+        );
 
         function sendName() {
             const nameElement = document.getElementById('name');
-            const json = JSON.stringify({
+            const data = {
                 role: ROLE,
                 name: nameElement.value
-            });
-            socket.send(json);
-            logger.send(`json: ${json}`);
+            };
+            socket.send(data);
+            logger.send(`data: ${JSON.stringify(data)}`);
         }
         function sendMessage() {
             const nameElement = document.getElementById('name');
             const messageElement = document.getElementById('message');
-            const json = JSON.stringify({
+            const data = {
                 role: ROLE,
                 name: nameElement.value,
                 message: messageElement.value
-            });
-            socket.send(json);
-            logger.send(`json: ${json}`);
+            };
+            socket.send(data);
+            logger.send(`data: ${JSON.stringify(data)}`);
             messageElement.value = '';
         }
     </script>
