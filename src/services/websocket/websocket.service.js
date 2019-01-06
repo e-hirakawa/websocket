@@ -8,7 +8,7 @@ let controllerAgents = new Agents.ControllerAgents();
 
 module.exports.init = (server) => {
     console.log('websocket service init');
-    const socket = new WebSocketServer(server, '/socket');
+    const socket = new WebSocketServer(server);
     socket.addEventListener(
         WebSocketEventType.RECIEVED,
         (data) => {

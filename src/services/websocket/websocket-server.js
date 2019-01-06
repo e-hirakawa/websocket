@@ -6,12 +6,12 @@ const WebSocketEventType = require('./websocket-event-type');
  * WebSocket サーバーサイドクラス
  */
 module.exports = class WebSocketServer {
-    constructor(server, serverPath) {
+    constructor(server) {
         this.__events = new EventEmmiter();
 
         const wss = new websocket.server({
             httpServer: server,
-            path: serverPath,
+            path: '/socket',
             maxReceivedFrameSize: 0x1000000,
             autoAcceptConnections: false
         });

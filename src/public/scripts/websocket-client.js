@@ -52,10 +52,9 @@ class WebSocketEvents {
  * WebSocketクライアントサイドクラス
  */
 class WebSocketClient {
-    constructor(destination) {
-        this.destination = destination;
+    constructor() {
         this.__events = new WebSocketEvents();
-        this.__socket = new WebSocket(`ws://${location.host}/${destination}/`);
+        this.__socket = new WebSocket(`ws://${location.host}/socket`);
         this.__socket.onopen = () => {
             this.__events.trigger(WebSocketEventType.OPENED, {});
         }
