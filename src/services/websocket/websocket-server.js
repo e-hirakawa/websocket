@@ -7,7 +7,7 @@ const WebSocketEventType = require('./websocket-event-type');
  * WebSocket サーバーサイドクラス
  */
 module.exports = class WebSocketServer {
-    constructor(server) {
+    constructor(server, serverPath) {
         this.__events = new EventEmmiter();
 
         const wss = new WebSocket.Server({ noServer: true });
@@ -27,12 +27,10 @@ module.exports = class WebSocketServer {
 
         server.on('upgrade', function upgrade(request, socket, head) {
             const pathname = url.parse(request.url).pathname;
-            if (pathname === '/socket') {
+            if (pathname === serverPath) {
                 wss.handleUpgrade(request, socket, head, ws => {
                     wss.emit('connection', ws, request);
                 });
-            } else {
-                socket.destroy();
             }
         });
     }

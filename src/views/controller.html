@@ -32,7 +32,7 @@
     <script>
         const ROLE = 'controller';
         const logger = new Logger(document.getElementById('console'));
-        const socket = new WebSocketClient();
+        const socket = new WebSocketClient('controller');
         // 接続
         socket.addEventListener(
             WebSocketEventType.OPENED,

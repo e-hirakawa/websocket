@@ -39,7 +39,7 @@
         const ROLE = 'monitor';
         const logger = new Logger(document.getElementById('console'));
         const table = new MonitorTable(document.getElementById('controllers'));
-        const socket = new WebSocketClient();
+        const socket = new WebSocketClient('monitor');
         // 接続
         socket.addEventListener(
             WebSocketEventType.OPENED,
